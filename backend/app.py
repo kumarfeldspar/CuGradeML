@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, send_file, make_response
 from flask_cors import CORS
 from GBMREG import gbmRakha, gbmRakhaTest
 import json
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -51,5 +52,9 @@ def train_data():
     except Exception as e:
         return jsonify({'result': str(e)}), 500
 
-if __name__ == '__main__':
-    app.run(debug=True, port=8001)
+# if __name__ == '__main__':
+#     app.run(debug=True, port=8001)
+
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 5000))  # Default to port 5000 if not set
+    app.run(host='0.0.0.0', port=port, debug=False)

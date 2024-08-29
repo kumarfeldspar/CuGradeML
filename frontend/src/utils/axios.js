@@ -2,10 +2,9 @@ import axios from "axios"; // Import the axios library to handle HTTP requests
 
 // Create an axios instance with custom configuration
 const customFetch = axios.create({
-  // baseURL: "http://127.0.0.1:8001", 
-  baseURL: "http://127.0.0.1:8001", 
-  
-  
+  // baseURL: "http://127.0.0.1:8001",
+  baseURL: "https://cugrademl.onrender.com",
+
   // Set the base URL for all requests made with this axios instance
   // You can also add other configurations like headers, timeout, etc., if needed
 });

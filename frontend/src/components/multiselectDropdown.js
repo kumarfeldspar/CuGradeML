@@ -38,7 +38,7 @@ const MultiSelectDropdown = ({ name, options, targetList, onChange }) => {
     <div className="form-row">
       {/* Label for the group of checkboxes */}
       <label htmlFor={name} className="form-label">
-        {name}
+        {options.length === 0 ? "" : name }
       </label>
 
       {/* Map over the options array to create a checkbox for each option */}

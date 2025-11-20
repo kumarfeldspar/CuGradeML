@@ -100,7 +100,7 @@ const Wrapper = styled.nav`
 
   /* Media query for larger screens (minimum width of 992px) */
   @media (min-width: 992px) {
-    position: sticky; /* Make the nav bar sticky (it will stick to the top of the page) */
+    /* Make the nav bar sticky (it will stick to the top of the page) */
     top: 0; /* Stick to the top of the viewport */
 
     .nav-center {

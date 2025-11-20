@@ -1,76 +1,110 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { testThunk } from "./testThunk"; // Import the test thunk for testing data
-import { trainThunk } from "./trainThunk"; // Import the train thunk for training data
-import { toast } from "react-toastify"; // Import toast for displaying notifications
+import { testThunk } from "./testThunk";
+import { trainThunk } from "./trainThunk";
+import { toast } from "react-toastify";
 
-// Define the initial state for the estimation data slice
 const initialState = {
-  t1: 1, // Initial value for parameter t1
-  t2: 2, // Initial value for parameter t2
-  t3: 3, // Initial value for parameter t3
-  t4: 4, // Initial value for parameter t4
-  t5: 5, // Initial value for parameter t5
-  t6: 6, // Initial value for parameter t6
-  n_estimators: 30, // Number of estimators for model training
-  max_depth: 30, // Maximum depth for model training
-  loss: "quantile", // Loss function to be used in the model
-  learning_rate: 0.5, // Learning rate for model training
-  criterion: "friedman_mse", // Criterion for model training
-  parsedData: [], // Array to store the parsed CSV data
-  isTraining: false, // Flag to indicate if training is in progress
-  isTesting: false, // Flag to indicate if testing is in progress
-  selectedInputHeaders: [], // Array to store selected input headers
-  selectedOutputHeaders: [], // Array to store selected output headers
-  trainingPlot: null, // Variable to store the training plot or result
+  model: "GBMREG",
+  selectedInputHeaders: [],
+  selectedOutputHeaders: [],
+  parsedData: [],
+  csvFile: null,
+  csvTestFile: null,
+  csvTrainingFile: null,
+  isTraining: false,
+  isTesting: false,
+  trainingPlot: null,
+  testPlot: null,
+  isTestMode: false,
+  extractedFiles: {}, // Moved into initialState
+  // GBM Parameters
+  gbm_n_estimators: 30,
+  gbm_max_depth: 30,
+  gbm_loss: "quantile",
+  gbm_learning_rate: 0.5,
+  gbm_criterion: "friedman_mse",
+  // GBM_MODEL Parameters
+  gbm_model_n_estimators: 50,
+  gbm_model_max_depth: 25,
+  gbm_model_loss: "huber",
+  gbm_model_learning_rate: 0.3,
+  gbm_model_criterion: "friedman_mse",
+  // GBMREG Parameters
+  gbmreg_n_estimators: 200,
+  gbmreg_max_depth: 20,
+  gbmreg_loss: "absolute_error",
+  gbmreg_learning_rate: 0.2,
+  gbmreg_criterion: "friedman_mse",
+  // Random Forest Specific Parameters
+  rf_n_estimators: 75,
+  rf_criterion: "squared_error",
+  rf_max_depth: 12,
+  rf_max_features: "sqrt",
+  rf_bootstrap: true,
+  rf_min_samples_leaf: 1,
+  rf_min_samples_split: 2,
+  // Random Forest Testing Parameters
+  rf_t1: "",
+  rf_t2: "",
+  rf_t3: "",
+  rf_t4: "",
+  rf_t5: "",
+  rf_t6: "",
 };
 
-// Define async thunks for testing and training data
 export const testData = createAsyncThunk("estimationData/test", testThunk);
 export const trainData = createAsyncThunk("estimationData/train", trainThunk);
 
-// Create a slice for estimation data with reducers and extra reducers
 const estimationDataSlice = createSlice({
-  name: "estimationData", // Name of the slice
-  initialState, // Initial state defined above
+  name: "estimationData",
+  initialState,
   reducers: {
-    // A reducer to handle changes in form input fields
     handleChange: (state, { payload: { name, value } }) => {
-      state[name] = value; // Update the state with the new value for the corresponding field
+      state[name] = value;
+    },
+    toggleTestMode: (state) => {
+      state.isTestMode = !state.isTestMode;
     },
   },
   extraReducers: (builder) => {
-    // Handle the async actions for testing data
     builder
+      .addCase(testData.pending, (state) => {
+        state.isTesting = true;
+      })
       .addCase(testData.fulfilled, (state, { payload }) => {
-        state.isTesting = false; // Set isTesting flag to false when testing is complete
-        console.log("payload =", payload); // Log the payload for debugging
-        state.parsedData = payload; // Update parsedData with the response from the test
+        console.log(state, payload, "State and Payload in TestData Fulfilled");
+        state.isTesting = false;
+        state.csvFile = payload.csvFile; // Store the CSV file
+        state.csvTestFile = payload.csvFile; // Store the URL
+        state.extractedFiles = payload.extractedFiles; // Store extracted files
+        // Find and set testPlot if a .png file exists in extractedFiles
+        const pngFileKey = Object.keys(payload.extractedFiles).find((key) =>
+          key.endsWith(".png")
+        );
+        if (pngFileKey) {
+          state.testPlot = payload.extractedFiles[pngFileKey];
+        }
       })
       .addCase(testData.rejected, (state, { payload }) => {
-        state.isTesting = false; // Set isTesting flag to false if testing fails
-        console.log(payload); // Log the error payload for debugging
-        toast.error("Server Error."); // Display an error toast notification
+        state.isTesting = false;
+        toast.error(payload || "Testing failed. Please try again.");
       })
-      .addCase(testData.pending, (state, { payload }) => {
-        state.isTesting = true; // Set isTesting flag to true when testing is in progress
-        console.log(payload); // Log the pending state payload for debugging
-      })
-      // Handle the async actions for training data
       .addCase(trainData.pending, (state) => {
-        state.isTraining = true; // Set isTraining flag to true when training is in progress
+        state.isTraining = true;
       })
       .addCase(trainData.fulfilled, (state, { payload }) => {
-        state.isTraining = false; // Set isTraining flag to false when training is complete
-        console.log(payload); // Log the payload for debugging
-        state.trainingPlot = payload; // Update trainingPlot with the response from the training
+        state.isTraining = false;
+        state.trainingPlot = payload;
       })
       .addCase(trainData.rejected, (state, { payload }) => {
-        state.isTraining = false; // Set isTraining flag to false if training fails
-        console.log(payload); // Log the error payload for debugging
-        toast.error("Please Enter Correct Parameters."); // Display an error toast notification
+        state.isTraining = false;
+        console.error(payload);
+        toast.error(
+          payload || "Training failed. Please check your parameters."
+        );
       });
   },
 });
 
-export default estimationDataSlice.reducer; // Export the reducer function from the slice
-export const { handleChange } = estimationDataSlice.actions; // Export the handleChange action from the slice
+export default estimationDataSlice.reducer;
+export const { handleChange, toggleTestMode } = estimationDataSlice.actions;

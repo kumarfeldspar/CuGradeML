@@ -1,43 +1,92 @@
-// Purpose: Display the Training plot image in a React component.
-
-// Import the useSelector hook from the React-Redux library. This hook allows
-// you to extract data from the Redux store's state.
-import { useSelector } from "react-redux";
-
-// Import the Wrapper component, which is likely a styled container for the component's layout.
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Wrapper from "../Wrappers/ParametersForm";
+import { toggleTestMode } from "../features/estimationData/estimationDataSlice"; // Adjust path as needed
 
-// Define the EstimationResult functional component.
 const EstimationResult = () => {
-  // Use the useSelector hook to retrieve the trainingPlot data from the Redux store.
-  // The trainingPlot is expected to be part of the estimationData slice of the store's state.
-  const { trainingPlot } = useSelector((store) => store.estimationData);
+  const { trainingPlot, testPlot, isTestMode, } = useSelector(
+    (store) => store.estimationData
+  );
+  const dispatch = useDispatch();
 
-  // If trainingPlot is not available (i.e., it's undefined or null), return null.
-  // This prevents rendering the component until the data is available.
-  if (!trainingPlot) {
-    return null; // Image data not available yet
-  }
+  const currentPlot = isTestMode ? testPlot : trainingPlot;
+  const activeFile = isTestMode ? testPlot : trainingPlot;  
 
-  // If trainingPlot is available, render the component with the following structure.
+  const downloadPlotFile = () => {
+    const element = document.createElement("a");
+    element.href = currentPlot;
+    element.download = `${
+      isTestMode ? "TestPlot" : "TrainingPlot"
+    }_${Date.now()}.jpg`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  if (!currentPlot) return null;
+
   return (
     <Wrapper>
-      {/* Main container for the form and the plot */}
       <div className="form form-row form-container">
-        <h3>Training Plot</h3>
-        {/* Center the image within the form */}
-        <div className="form-center">
-          {/* Display the training plot image using the src attribute to bind the trainingPlot data */}
+        <h3>{isTestMode ? "Test Plot" : "Training Plot"}</h3>
+        <div className="plot-controls" style={{ marginBottom: "20px" }}>
+          <button
+            type="button"
+            onClick={() => dispatch(toggleTestMode())}
+            className={`btn ${!isTestMode ? "active" : ""}`}
+            style={{
+              marginRight: "10px",
+              padding: "10px 20px",
+              backgroundColor: !isTestMode ? "#007BFF" : "#6c757d",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}>
+            Training
+          </button>
+          <button
+            type="button"
+            onClick={() => dispatch(toggleTestMode())}
+            className={`btn ${isTestMode ? "active" : ""}`}
+            style={{
+              padding: "10px 20px",
+              backgroundColor: isTestMode ? "#007BFF" : "#6c757d",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}>
+            Test
+          </button>
+        </div>
+        <div className="plot-container" style={{ textAlign: "center" }}>
           <img
-            src={trainingPlot}
-            alt="Training Plot"
+            src={currentPlot}
+            alt={isTestMode ? "Test Plot" : "Training Plot"}
             className="resized-image"
+            style={{ maxWidth: "100%", height: "auto", marginBottom: "20px" }}
           />
+          <div className="btnDiv">
+            <button
+              type="button"
+              className="btn"
+              onClick={downloadPlotFile}
+              style={{
+                padding: "10px 20px",
+                backgroundColor: "#28a745",
+                color: "#fff",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}>
+              Download
+            </button>
+          </div>
         </div>
       </div>
     </Wrapper>
   );
 };
 
-// Export the EstimationResult component as the default export of the module.
 export default EstimationResult;

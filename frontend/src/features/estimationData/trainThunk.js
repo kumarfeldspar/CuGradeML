@@ -1,16 +1,18 @@
+// src/features/estimationData/trainThunk.js
+
 import customFetch, { checkForUnauthorizedResponse } from "../../utils/axios";
 
 // Asynchronous thunk function for handling the training process
-export const trainThunk = async (trainingData) => {
+export const trainThunk = async (trainingData, thunkAPI) => {
   try {
-    // Log the training data being sent to the server
-    console.log("sending data = ", trainingData);
+    // Log the training data being sent to the server for debugging
 
     // Send a POST request to the '/train' endpoint with the training data
-    // The response is expected to be in 'blob' format, which is often used for binary data (like files)
+    // The response is expected to be in 'blob' format, typically used for binary data like images
     const { data } = await customFetch.post("/train", trainingData, {
       responseType: "blob", // Specify that the response is a binary large object (blob)
     });
+
 
     // Create a new Blob object from the response data
     const blob = new Blob([data]);

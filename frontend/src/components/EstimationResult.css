@@ -1,0 +1,78 @@
+/* Toggle buttons */
+.plot-controls {
+	margin-bottom: 1rem;
+}
+
+.toggle-btn {
+	margin-right: 0.5rem;
+	padding: 0.5rem 1rem;
+	background-color: #6c757d;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.toggle-btn.active {
+	background-color: #007bff;
+}
+
+/* Plot container */
+.plot-container {
+	text-align: center;
+	margin-bottom: 2rem;
+}
+
+.resized-image {
+	max-width: 100%;
+	height: auto;
+	margin-bottom: 1rem;
+}
+
+.download-btn {
+	padding: 0.5rem 1rem;
+	background-color: #28a745;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+/* Statistical Summary */
+.stats-section {
+	margin-bottom: 2rem;
+}
+
+.stat-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.stat-table th,
+.stat-table td {
+	padding: 0.75rem 1rem;
+	border: 1px solid #dee2e6;
+	text-align: center;
+}
+
+.stat-table th {
+	background-color: #f8f9fa;
+	font-weight: 600;
+	color: #343a40;
+}
+
+.stat-table tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+.stat-table tr:hover {
+	background-color: #e9ecef;
+	transition: background-color 0.3s ease;
+}
+
+/* Chart sections */
+.chart-section {
+	margin-top: 2rem;
+}
+

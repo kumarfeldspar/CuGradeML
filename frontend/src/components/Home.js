@@ -5,6 +5,10 @@ import NavBar from "./NavBar"; // Import the NavBar component for navigation
 import TestingForm from "./testingForm"; // Import the TestingForm component for testing-related inputs
 import TrainingForm from "./trainingForm"; // Import the TrainingForm component for training-related inputs
 import EstimationResult from "./estimationResult"; // Import the EstimationResult component to display results
+import ThreeDVis from "./ThreeDVis";
+
+
+//TITLE : Development of AI Based integrated system for exploration targeting of copper deposits
 
 // The Home component is the main container component that combines various other components to form the homepage
 const Home = () => {
@@ -18,7 +22,7 @@ const Home = () => {
       <NavBar />
 
       {/* The form-container div wraps the TrainingForm and TestingForm components */}
-      <div className="form-container">
+      <div className="form-container form-data">
         <TrainingForm />{" "}
         {/* Renders the TrainingForm component for inputting training data */}
         <TestingForm />{" "}
@@ -27,6 +31,7 @@ const Home = () => {
 
       {/* Render the EstimationResult component to display the estimation results */}
       <EstimationResult />
+      <ThreeDVis />
 
       {/* Render the CSVDataTable component and pass the parsedData from the Redux store to it.
           This will display the parsed data in a tabular format. */}
